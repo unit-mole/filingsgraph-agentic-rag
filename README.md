@@ -1,0 +1,435 @@
+# FilingsGraph — Temporal Financial Due-Diligence & Risk Intelligence Engine
+
+> Advanced RAG • Temporal AI • XBRL • GraphRAG • Agentic Retrieval • Financial Intelligence
+
+FilingsGraph is a production-oriented research system for reasoning across **SEC filings, structured XBRL financial facts, fiscal periods, risk disclosures, deterministic calculations and evidence-provenanced temporal knowledge graphs**. It is intentionally more than “upload a 10-K → embed → chat”.
+
+**Responsible use:** FilingsGraph is a research and financial-document intelligence tool. It summarizes and analyzes publicly available information and is **not investment advice**, a stock-picking bot, a trading system, or a personalized financial-advice engine.
+
+## What this repository demonstrates
+
+- official SEC EDGAR ingestion with Fair Access controls and caching;
+- runtime ticker → CIK entity resolution;
+- 10-K metadata, HTML and Company Facts/XBRL ingestion;
+- section-aware / hierarchical filing parsing and table extraction;
+- BGE-M3 dense retrieval + BM25 lexical retrieval + RRF hybrid fusion;
+- BGE reranking;
+- DuckDB default structured financial database and optional PostgreSQL adapter;
+- deterministic growth/margin/CAGR/revenue-mix calculations;
+- fiscal-period normalization using filing report dates + XBRL provenance;
+- temporal Item 1A risk-difference analysis;
+- provenance-bearing NetworkX temporal graph with bounded traversal;
+- single Financial Research Orchestrator using deterministic tools;
+- local Qwen3 reasoning with no mandatory paid model API;
+- numeric/entity/unit/temporal/citation verification;
+- prompt-injection defense and SEC-domain allowlisting;
+- OpenTelemetry/Phoenix-compatible observability;
+- V0 → V6 evaluation and ablation framework;
+- FastAPI + Gradio local application;
+- Hugging Face CPU-demo packaging and ZeroGPU-ready deployment strategy.
+
+## Why normal filing RAG is not enough
+
+Financial due diligence mixes fundamentally different evidence types:
+
+1. Narrative questions need semantic and lexical retrieval.
+2. Exact financial numbers should come from structured facts, not LLM arithmetic.
+3. “What changed?” requires correct cross-period alignment.
+4. Relational questions benefit from a graph, but only when graph traversal adds evidence.
+5. Every conclusion needs provenance, citations and verification.
+
+FilingsGraph routes these responsibilities instead of forcing one embedding index and one LLM to do everything.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    U[Research Question] --> ER[Entity + Period Resolution]
+    ER --> QR[Query Router / Research Plan]
+    QR --> TR[Hybrid Filing Retrieval]
+    QR --> XR[XBRL / Financial Tools]
+    QR --> TA[Temporal Risk Engine]
+    QR --> GR[Temporal Graph Retrieval]
+
+    TR --> E[Evidence Bundle]
+    XR --> E
+    TA --> E
+    GR --> E
+
+    E --> L[Local Qwen3 Synthesis]
+    L --> V[Numeric + Entity + Unit + Period + Citation Verification]
+    V --> R[Analyst-Style Research Report]
+```
+
+Default graph traversal is bounded to 2 hops / 30 nodes. Filing content is treated as untrusted data, not executable instructions.
+
+## Frozen initial scope
+
+**Cohort:** NVIDIA (NVDA), AMD, Intel (INTC), Broadcom (AVGO), Qualcomm (QCOM).
+
+The repository does **not hardcode CIKs**. `scripts.resolve_companies` resolves them from the SEC ticker mapping at runtime and stores the authoritative 10-digit CIK.
+
+**Initial filing scope:** latest four annual 10-K filings per company. Primary sections:
+
+- Item 1 — Business
+- Item 1A — Risk Factors
+- Item 7 — MD&A
+- Item 7A — Market Risk
+- Item 8 — Financial Statements and Notes
+
+This bounded corpus gives enough temporal depth for cross-company comparison without attempting to ingest the entire SEC corpus.
+
+## Open-source model stack
+
+| Purpose | Default |
+|---|---|
+| Reasoning | `Qwen/Qwen3-14B` |
+| Faster/deployment comparison | `Qwen/Qwen3-8B` |
+| Embeddings | `BAAI/bge-m3` |
+| Reranker | `BAAI/bge-reranker-v2-m3` |
+| Sparse retrieval | `rank-bm25` |
+| Dense store | Qdrant local/embedded by default |
+| Structured data | DuckDB default; PostgreSQL optional |
+| Graph | NetworkX |
+| Agent workflow | LangGraph + typed deterministic tools |
+| API / UI | FastAPI + Gradio |
+| Observability | OpenTelemetry + Phoenix |
+
+The default application requires **$0 mandatory paid LLM/API cost**. Optional commercial provider keys remain disabled and blank.
+
+## V0 → V6 progression
+
+| Version | Capability added | Measurement intent |
+|---|---|---|
+| V0 | naive dense filing RAG | dense baseline |
+| V1 | section hierarchy, metadata, parent context | section-aware retrieval gain |
+| V2 | BM25 + dense + RRF | hybrid retrieval gain |
+| V3 | local reranker | relevance vs latency |
+| V4 | XBRL + DuckDB + deterministic finance | numeric accuracy |
+| V5 | temporal risk intelligence + graph retrieval | temporal/relational gain |
+| V6 | routed orchestrator + verification + observability + security + API/UI | production system |
+
+The scripts never fabricate a score merely because a version exists. Status gates and evaluation metrics are separate.
+
+## SEC Fair Access
+
+Before downloading data, configure a descriptive identity in `.env`:
+
+```text
+SEC_USER_AGENT=FilingsGraph research-project Your Name your.real.email@domain.com
+SEC_CONTACT_EMAIL=your.real.email@domain.com
+SEC_REQUESTS_PER_SECOND=5
+```
+
+FilingsGraph:
+
+- refuses the example identity;
+- allowlists SEC domains;
+- caches every network response;
+- throttles requests;
+- retries transient errors with exponential backoff;
+- defaults to 5 requests/second.
+
+## XBRL and deterministic finance
+
+The project stores raw and normalized financial provenance, including concept, taxonomy, unit, raw value, normalized value, fiscal year/period, accession, filed date and mapping method/confidence.
+
+Initial normalized metrics include revenue, net income, operating income, gross profit, assets, liabilities, equity, capital expenditure and cash. Unknown/company-specific concepts remain distinct instead of being silently merged by LLM judgment.
+
+Calculations such as `growth_rate`, `CAGR`, `gross_margin`, `operating_margin`, `capex_change`, `revenue_mix`, `segment_growth` and percentage-point changes run in deterministic Python/SQL.
+
+## Temporal risk intelligence
+
+Item 1A passages are aligned across annual filings and compared by risk topic. The engine can classify evidence as:
+
+`NEW`, `EXPANDED`, `REDUCED`, `UNCHANGED`, `REMOVED`.
+
+Automated temporal outputs are generated immediately, but **risk-change F1 remains TBD until human-reviewed gold labels are frozen**. The project does not use its own unreviewed output as a fake benchmark score.
+
+## Temporal knowledge graph
+
+The mandatory MVP graph uses NetworkX and implements meaningful, evidence-bearing relationships rather than graph size for its own sake.
+
+Core nodes/edges currently include:
+
+- Company
+- Filing
+- Risk
+- RiskObservation
+- `COMPANY_HAS_FILING`
+- `COMPANY_EXPOSED_TO_RISK`
+- `RISK_CHANGED_FROM`
+
+Non-trivial edges preserve filing ID, source chunk ID, source text span, extraction method, confidence and `valid_from` / `valid_to`.
+
+Neo4j Community is an optional profile and is not required by the core project.
+
+## Research orchestrator
+
+The V6 orchestration path routes questions into `TEXTUAL`, `NUMERIC`, `TEMPORAL`, `GRAPH`, `MULTI_COMPANY`, `MACRO` or `MIXED`. It can combine:
+
+- hybrid filing evidence;
+- exact XBRL facts;
+- deterministic calculations;
+- temporal Item 1A changes;
+- bounded graph traversal;
+- local Qwen synthesis;
+- independent verification.
+
+This is deliberately one orchestrator rather than multiple agents added for buzzwords.
+
+## Verification layer
+
+Final research output is designed to check:
+
+- citation existence/coverage;
+- correct company/entity;
+- correct fiscal period;
+- numerical calculation traceability;
+- unit consistency;
+- contradictory evidence.
+
+The LLM consumes calculated values; it is not asked to perform financial arithmetic mentally when an exact tool exists.
+
+## Security
+
+Retrieved SEC text is untrusted content. Core controls include:
+
+- prompt-injection detection;
+- explicit `<UNTRUSTED_SEC_DATA>` wrapping;
+- source-domain allowlist;
+- read-only research tools;
+- typed schemas;
+- query/context/tool limits;
+- graph expansion limits;
+- disabled commercial keys by default;
+- no agent-generated arbitrary web requests.
+
+Run:
+
+```bat
+pytest tests\security -q
+```
+
+## Evaluation
+
+The benchmark builder creates DEV and protected TEST JSONL from the ingested corpus. Evaluation covers:
+
+- Recall@5 / Recall@10
+- Precision@K
+- Hit Rate
+- MRR
+- nDCG@10
+- exact financial fact selection
+- unit accuracy
+- temporal output generation
+- graph provenance completeness
+- routing accuracy
+- citation-verifier behavior
+- graph 0/1/2-hop ablation
+- structured-data ablation
+- retrieval latency
+- optional Qwen3 8B vs 14B comparison
+
+Judgment-dependent metrics remain `TBD` until legitimate reviewed gold exists.
+
+## Required ablations
+
+Generated artifacts include comparisons for:
+
+- dense only;
+- BM25 only;
+- hybrid;
+- hybrid + reranker;
+- + structured XBRL tools;
+- + temporal retrieval;
+- + graph retrieval;
+- full routed system;
+- graph 0 vs 1 vs 2 hops;
+- LLM/table-text numeric path vs deterministic XBRL path.
+
+See `reports/ablations/` after execution.
+
+## Quick installation — Windows CMD
+
+```bat
+cd /d D:\Projects\filingsgraph
+py -3.11 -m venv .venv
+call .venv\Scripts\activate.bat
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -e ".[dev]"
+copy .env.example .env
+notepad .env
+```
+
+Then follow **`docs/WINDOWS_RUNBOOK.md`** exactly.
+
+## Individual core commands
+
+```bat
+python -m scripts.check_environment
+python -m scripts.validate_sec_access
+python -m scripts.resolve_companies
+python -m scripts.download_filings
+python -m scripts.download_companyfacts
+python -m scripts.validate_data
+python -m scripts.build_documents
+python -m scripts.build_database
+python -m scripts.build_index
+python -m scripts.build_graph
+python -m scripts.build_eval_set
+
+python -m scripts.run_v0
+python -m scripts.run_v1
+python -m scripts.run_v2
+python -m scripts.run_v3
+python -m scripts.run_v4
+python -m scripts.run_v5
+python -m scripts.run_v6
+
+python -m scripts.evaluate_retrieval --split dev
+python -m scripts.evaluate_retrieval --split test
+python -m scripts.evaluate_financial
+python -m scripts.evaluate_temporal
+python -m scripts.evaluate_graph
+python -m scripts.evaluate_agent
+python -m scripts.evaluate_grounding
+python -m scripts.ablate_graph
+python -m scripts.ablate_structured
+python -m scripts.evaluate_system
+python -m scripts.build_ablation_table
+python -m scripts.export_failure_analysis
+python -m scripts.export_final_results
+```
+
+After manual setup, `RUN_ALL_WINDOWS.cmd` is the automated path.
+
+## FastAPI
+
+```bat
+uvicorn filingsgraph.api.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+Key endpoints:
+
+- `GET /health`
+- `GET /companies`
+- `GET /filings`
+- `POST /research`
+- `POST /compare/companies`
+- `POST /compare/periods`
+- `POST /risks/evolution`
+- `GET /graph/company/{ticker}`
+- `GET /graph/risk/{risk_id}`
+- `POST /retrieval/debug`
+- `GET /metrics/summary`
+
+Heavy model/index initialization is lazy, so API import does not silently download multi-GB models.
+
+## Gradio UI
+
+```bat
+python app\gradio_app.py
+```
+
+The UI provides:
+
+- research question + concise research plan;
+- evidence table;
+- verification panel;
+- financial fact history;
+- risk timeline output;
+- graph explorer;
+- evaluation status.
+
+## Docker
+
+Optional infrastructure:
+
+```bat
+docker compose up -d postgres qdrant phoenix
+```
+
+Neo4j is optional:
+
+```bat
+docker compose --profile neo4j up -d neo4j
+```
+
+The default project remains runnable with DuckDB + embedded Qdrant + NetworkX if office-system constraints make extra services undesirable.
+
+## Local model serving
+
+### Windows / direct Transformers — default no-admin path
+
+Set:
+
+```text
+LOCAL_LLM_BACKEND=transformers
+LOCAL_LLM_MODEL=Qwen/Qwen3-14B
+```
+
+The model is lazy-loaded when full research mode is enabled.
+
+### WSL2 / vLLM — optional
+
+If your existing WSL environment already supports the required packages without admin changes, vLLM can expose an OpenAI-compatible local endpoint. This path is optional; the project must not require an OS-level change on the office system.
+
+## Hugging Face deployment
+
+After the full local run succeeds:
+
+```bat
+python -m scripts.prepare_hf_space
+```
+
+`deploy/huggingface/` supports a transparent CPU-friendly demo built from curated public SEC evidence. It does **not** claim cached responses are live Qwen inference. If a genuinely free ZeroGPU resource is available later, a smaller live model can be benchmarked before enabling it.
+
+## Observability
+
+Phoenix is included in Docker Compose. OpenTelemetry helpers are under `src/filingsgraph/observability/`. Traces can capture routing, retrieval, XBRL, graph, temporal, generation and verification stages after `PHOENIX_ENDPOINT` is configured.
+
+## Repository structure
+
+```text
+filingsgraph/
+├── configs/                 # company/model/retrieval/graph/agent/eval config
+├── data/                    # runtime raw/processed/index/graph/evaluation artifacts
+├── notebooks/               # exploration + ablation notebooks
+├── src/filingsgraph/        # production package
+├── app/                     # Gradio app + runtime
+├── deploy/huggingface/      # public CPU demo packaging
+├── scripts/                 # complete build/evaluate/export command path
+├── tests/                   # unit/integration/security/retrieval/graph/etc.
+├── reports/                 # generated baselines/experiments/ablations/final
+├── docs/                    # architecture + Windows runbook + original requirements
+├── assets/                  # diagrams/screenshots/graph/timeline/demo assets
+└── .github/workflows/       # CI
+```
+
+## Validation status of the delivered source
+
+Before packaging, the project is checked with:
+
+- recursive Python syntax compilation;
+- lightweight fixture/unit/integration/security/evaluation tests;
+- repository audit for empty core Python modules;
+- ZIP checksum generation.
+
+Large-model, SEC-network, CUDA/RTX 5090, Docker-service and full-Qdrant/BGE/reranker execution must be performed on the local machine and are never represented as already validated when they were not.
+
+## Limitations
+
+- Initial graph scope intentionally prioritizes company/filing/risk temporal relationships; richer segment/product/geography/subsidiary extraction is a measured extension, not a fake MVP feature.
+- Company-specific XBRL extension normalization is conservative.
+- Risk-change F1, graph edge/path precision and generated-answer groundedness require human-reviewed frozen gold before they can be published.
+- Public HF CPU mode is a curated demonstration, not equivalent to full RTX 5090 inference.
+- No output should be interpreted as investment advice.
+
+## Data attribution
+
+All mandatory financial source data comes from public SEC EDGAR resources. See `DATA_SOURCES.md`.
+
+## License
+
+Source code: MIT. External models/data retain their own licenses/terms. As verified at packaging time, Qwen3-8B and Qwen3-14B are Apache-2.0, BGE-M3 is MIT, and BGE reranker v2-m3 is Apache-2.0. Always re-check upstream terms before redistribution/deployment.

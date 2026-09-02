@@ -1,0 +1,17 @@
+flowchart LR
+SEC[SEC EDGAR] --> ING[Cached Ingestion]
+ING --> DOC[Section-aware Documents]
+ING --> X[XBRL Facts]
+DOC --> D[Dense BGE-M3]
+DOC --> B[BM25]
+D --> H[RRF Hybrid]
+B --> H
+H --> RR[BGE Reranker]
+X --> DB[DuckDB/Postgres]
+DOC --> TG[Temporal NetworkX Graph]
+RR --> ORCH[Research Orchestrator]
+DB --> ORCH
+TG --> ORCH
+ORCH --> Q[Local Qwen3]
+Q --> V[Verification]
+V --> REP[Analyst Report]

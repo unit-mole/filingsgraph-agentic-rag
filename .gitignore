@@ -1,0 +1,62 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.env
+.DS_Store
+*.log
+.cache/
+models/
+data/raw/filings/*
+data/raw/xbrl/*
+data/processed/*
+data/index/*
+data/graph/*
+!data/**/.gitkeep
+reports/**/*.json
+reports/**/*.csv
+reports/**/*.html
+reports/**/*.png
+!reports/**/.gitkeep
+artifacts/\n\n# Local secrets
+.env
+.env.*
+!.env.example
+
+# Python environment/cache
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Model/cache artifacts
+.cache/
+huggingface/
+models/
+checkpoints/
+*.safetensors
+*.gguf
+*.pt
+*.pth
+
+# Local data/vector/database artifacts
+data/raw/
+data/cache/
+data/qdrant/
+data/vectorstore/
+qdrant_storage/
+*.duckdb
+*.sqlite
+*.sqlite3
+
+# Local temporary files
+*.log
+.DS_Store
+Thumbs.db
+\n

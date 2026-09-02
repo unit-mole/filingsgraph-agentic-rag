@@ -1,0 +1,6 @@
+seed: 42
+dev_questions: 120
+test_questions: 80
+retrieval_k: [5, 10]
+graph_hops: [0, 1, 2]
+versions: [v0, v1, v2, v3, v4, v5, v6]

@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: filingsgraph
+      POSTGRES_USER: filingsgraph
+      POSTGRES_PASSWORD: filingsgraph
+    ports: ["5432:5432"]
+    volumes: ["filingsgraph_pg:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U filingsgraph"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports: ["6333:6333", "6334:6334"]
+    volumes: ["filingsgraph_qdrant:/qdrant/storage"]
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports: ["6006:6006", "4317:4317"]
+
+  neo4j:
+    profiles: ["neo4j"]
+    image: neo4j:5-community
+    environment:
+      NEO4J_AUTH: neo4j/filingsgraph-demo
+    ports: ["7474:7474", "7687:7687"]
+    volumes: ["filingsgraph_neo4j:/data"]
+
+volumes:
+  filingsgraph_pg:
+  filingsgraph_qdrant:
+  filingsgraph_neo4j:

@@ -1,0 +1,4 @@
+max_retrieval_cycles: 2
+max_tool_calls: 15
+minimum_evidence_items: 2
+allow_macro_tool: false

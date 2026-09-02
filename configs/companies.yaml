@@ -1,0 +1,23 @@
+cohort_name: Semiconductor / Advanced Computing
+resolve_cik_at_runtime: true
+companies:
+  - ticker: NVDA
+    company_name: NVIDIA Corporation
+  - ticker: AMD
+    company_name: Advanced Micro Devices, Inc.
+  - ticker: INTC
+    company_name: Intel Corporation
+  - ticker: AVGO
+    company_name: Broadcom Inc.
+  - ticker: QCOM
+    company_name: QUALCOMM Incorporated
+filing_scope:
+  forms: [10-K]
+  annual_filings_per_company: 4
+  include_amendments: false
+sections:
+  - Item 1
+  - Item 1A
+  - Item 7
+  - Item 7A
+  - Item 8

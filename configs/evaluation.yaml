@@ -1,0 +1,16 @@
+seed: 42
+retrieval_k: [5, 10]
+graph_hops: [0, 1, 2]
+versions: [v0, v1, v2, v3, v4, v5, v6]
+
+# Patch 1 benchmark: category-stratified rather than overwhelmingly textual.
+category_targets:
+  textual_lookup: 60
+  exact_financial_fact: 40
+  temporal: 30
+  graph: 30
+  mixed: 20
+  no_answer: 20
+
+dev_fraction: 0.70
+minimum_question_chars: 20

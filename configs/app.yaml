@@ -1,0 +1,9 @@
+title: FilingsGraph
+subtitle: Temporal Financial Due-Diligence & Risk Intelligence Engine
+responsible_use: >-
+  FilingsGraph is a research and financial-document intelligence tool. It summarizes
+  and analyzes publicly available information and is not investment advice.
+api_host: 127.0.0.1
+api_port: 8000
+gradio_host: 127.0.0.1
+gradio_port: 7860

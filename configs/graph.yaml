@@ -1,0 +1,15 @@
+mode: networkx
+max_hops: 2
+max_nodes: 30
+min_edge_confidence: 0.55
+risk_topics:
+  - export controls
+  - supply chain
+  - cybersecurity
+  - artificial intelligence regulation
+  - semiconductor manufacturing
+  - geopolitical tensions
+  - customer concentration
+  - competition
+  - intellectual property
+  - data privacy

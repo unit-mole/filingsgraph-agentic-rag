@@ -1,0 +1,8 @@
+dense_top_k: 30
+sparse_top_k: 30
+fusion_top_k: 30
+rerank_top_k: 8
+rrf_k: 60
+chunk_target_chars: 3500
+chunk_overlap_chars: 500
+parent_context_chars: 5000
