@@ -8,6 +8,7 @@
 [![SEC EDGAR](https://img.shields.io/badge/Data-SEC%20EDGAR-111827.svg)](https://www.sec.gov/edgar)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![Gradio](https://img.shields.io/badge/UI-Gradio-ff7c00.svg)](https://www.gradio.app/)
+[![Hugging Face Space](https://img.shields.io/badge/Hugging%20Face-Live%20Static%20Space-FFD21E.svg?logo=huggingface&logoColor=black)](https://huggingface.co/spaces/anmol-unitmole/filingsgraph-agentic-rag)
 [![CI](https://github.com/unit-mole/filingsgraph-agentic-rag/actions/workflows/tests.yml/badge.svg)](https://github.com/unit-mole/filingsgraph-agentic-rag/actions)
 [![Security](https://github.com/unit-mole/filingsgraph-agentic-rag/actions/workflows/security.yml/badge.svg)](https://github.com/unit-mole/filingsgraph-agentic-rag/actions)
 [![Lint](https://github.com/unit-mole/filingsgraph-agentic-rag/actions/workflows/lint.yml/badge.svg)](https://github.com/unit-mole/filingsgraph-agentic-rag/actions)
@@ -15,9 +16,9 @@
 
 A portfolio-grade **Agentic RAG system for financial due diligence and risk intelligence** that combines SEC EDGAR filings, XBRL facts, hybrid retrieval, deterministic financial tools, temporal disclosure comparison, a provenance-preserving risk graph, local Qwen3 reasoning, and claim-level citation verification.
 
-**Status:** Final local evaluation completed; FastAPI and Gradio validated; GitHub release in progress  
+**Status:** Portfolio-ready, evaluated, GitHub CI validated, and Hugging Face portfolio application deployed  
 **Repository:** [unit-mole/filingsgraph-agentic-rag](https://github.com/unit-mole/filingsgraph-agentic-rag)  
-**Live application:** Hugging Face deployment will be added after the public Space is validated  
+**Live application:** [Open the FilingsGraph Hugging Face Space](https://huggingface.co/spaces/anmol-unitmole/filingsgraph-agentic-rag)  
 **Primary stack:** Python · Qwen3-8B · BGE-M3 · BGE reranker · BM25 · Reciprocal Rank Fusion · Qdrant · DuckDB · NetworkX · SEC EDGAR/XBRL · FastAPI · Gradio · pytest · Ruff
 
 > **Mandatory paid external LLM/API dependency: $0.**  
@@ -107,7 +108,7 @@ Build an end-to-end financial research system that can:
 | API / UI | FastAPI + Gradio |
 | Testing | pytest |
 | Code quality | Ruff critical-error gate |
-| Deployment | GitHub + Hugging Face |
+| Deployment | GitHub + Hugging Face Static Space |
 | Cost posture | $0 mandatory paid external LLM/API dependency |
 
 ---
@@ -133,7 +134,7 @@ Build an end-to-end financial research system that can:
 | Testing | pytest |
 | Lint | Ruff |
 | Automation | GitHub Actions |
-| Deployment target | Hugging Face Space |
+| Deployment target | Hugging Face Static Space |
 | Packaging | Git + tagged releases |
 
 ---
@@ -716,25 +717,61 @@ The full local-model option loads the GPU-backed model/index workflow.
 
 ## Hugging Face Space
 
-**Deployment status:** To be added after GitHub CI and public Space validation.
+The public portfolio application is available here:
 
-The public Hugging Face deployment will be designed as a portfolio demonstration that does not misrepresent free CPU hardware as running the full local Qwen3-8B/14B stack.
+[![Open FilingsGraph Live Demo](https://img.shields.io/badge/Open-FilingsGraph%20Live%20Demo-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/anmol-unitmole/filingsgraph-agentic-rag)
 
-### Planned application link
+**Live application:** [https://huggingface.co/spaces/anmol-unitmole/filingsgraph-agentic-rag](https://huggingface.co/spaces/anmol-unitmole/filingsgraph-agentic-rag)
 
-```text
-To be added after deployment.
-```
+The Hugging Face deployment is an **interactive Static Space** that presents the validated architecture, measured results, deployment scope, and representative locally executed workflow replays.
 
-### Planned screenshots
+### Application Overview
 
-```text
-Application Overview       -> to be added
-Financial / XBRL Example   -> to be added
-Temporal Risk Example      -> to be added
-GraphRAG Example           -> to be added
-Evaluation Dashboard       -> to be added
-```
+![FilingsGraph application overview](assets/screenshots/filingsgraph-home.png)
+
+*FilingsGraph public portfolio interface showing the project positioning, validated local-runtime status, engineering stack, and key measured outcomes.*
+
+### Routed Architecture
+
+![FilingsGraph architecture](assets/screenshots/filingsgraph-architecture.png)
+
+*Routed financial-research architecture showing deterministic XBRL tooling, hybrid retrieval, Temporal RAG, GraphRAG, Qwen3 synthesis, and claim-level verification.*
+
+### Final Evaluation
+
+![FilingsGraph evaluation](assets/screenshots/filingsgraph-evaluation.png)
+
+*Final evaluation view presenting structured-financial, textual retrieval, Temporal, Graph, grounding, and frozen-core measurements.*
+
+### Validated Demo Replay
+
+![FilingsGraph validated demo](assets/screenshots/filingsgraph-demo.png)
+
+*Representative validated workflow replay for Numeric, Temporal, Graph, and Mixed research modes.*
+
+### Public deployment scope
+
+The full Agentic RAG system is **implemented and validated locally**. The static nature of the public Hugging Face application is a **hosting/runtime constraint, not a model-readiness limitation**.
+
+| Component | Validated local project | Public Hugging Face Static Space |
+|---|---|---|
+| Qwen3-8B reasoning | **Live local GPU inference** | Validated precomputed workflow replay |
+| BGE-M3 retrieval | **Live local embedding pipeline** | Architecture / measured results |
+| BM25 + RRF + reranker | **Live local retrieval stack** | Validated retrieval evidence |
+| Qdrant | **Live local vector index** | Not exposed from static hosting |
+| DuckDB / XBRL tools | **Live deterministic financial tooling** | Validated financial results |
+| Temporal RAG | **Live local comparison workflow** | Validated Temporal replay / metrics |
+| GraphRAG | **Live local graph workflow** | Validated graph replay / metrics |
+| FastAPI / Gradio | **Locally validated interfaces** | Not executed server-side |
+| User-entered arbitrary research questions | **Supported by the full local backend** | Not available without a hosted backend |
+| Purpose | Full engineering implementation and evaluation | Public portfolio demonstration |
+
+> **Why is the public demo static?**  
+> This Hugging Face Space uses the **Static SDK**, which does not provide the persistent Python/GPU runtime required by Qwen3-8B, BGE-M3, Qdrant, and the rest of the live backend stack. The model, retrieval pipeline, APIs, and local application are already implemented and validated. With an appropriate GPU-backed deployment environment, the same backend can be hosted as a fully live research application.
+
+The public Space therefore does **not** pretend that free static hosting is executing Qwen3-8B. It presents genuine validated outputs and measurements while the GitHub repository preserves the complete implementation.
+
+---
 
 ---
 
@@ -975,7 +1012,7 @@ Formatting and broader style cleanup can be applied incrementally without weaken
 - Grounding metrics verify citation attachment/validity; they are not presented as a semantic-entailment benchmark.
 - The original TEST split was observed before final archival; core retrieval components were frozen afterward and not post-hoc tuned against those results.
 - Qwen3-14B was substantially slower locally and was not selected for the default runtime.
-- Public Hugging Face deployment will not claim full free-CPU execution of the local Qwen3-8B/14B stack unless the deployed infrastructure actually provides it.
+- The public Hugging Face Static Space does not execute the full local Qwen3-8B/BGE-M3/Qdrant backend; it transparently presents validated local outputs because the current static hosting environment does not provide the required GPU-backed Python runtime.
 - This project supports research and portfolio demonstration; it is not investment advice.
 
 ---
